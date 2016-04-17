@@ -174,7 +174,7 @@ namespace watermark {
 		//waitKey(0); // Wait for a keystroke in the window
 		// Write extracted watermarks
 		for (int i = 0; i < watermarkedNumber; ++i) {
-			// this will errase the input image and save the watermarked one.
+			// this will erase the input image and save the watermarked one.
 			result["watermarkedImages"][i] = imagesPath.at(i);
 			imwrite(imagesPath.at(i), originalImages.at(i));
 		}
@@ -183,22 +183,22 @@ namespace watermark {
 		result["watermarkedNumber"] = watermarkedNumber;
 		result["watermarkRedundancy"] = redundancy;
 		result["watermarkWidth"] = watermark.cols;
-		result["watermarkHeigth"] = watermark.rows;
+		result["watermarkHeight"] = watermark.rows;
 
 		std::cout << result << std::endl;
 
 		return 0;
 	};
 
-	int extractWatermark(std::vector<std::string> imagesPath, int width, int heigth) {
+	int extractWatermark(std::vector<std::string> imagesPath, int width, int height) {
 		
 		Json::Value result;
 		// extracted watermarks
 		std::vector<Mat> watermarks;
 		// Variable that stores an extracted watermark;
-		Mat watermark = Mat(width, heigth, CV_8UC1, Scalar(0));
+		Mat watermark = Mat(width, height, CV_8UC1, Scalar(0));
 		watermark.at<uchar>(0, 0) = 0;
-		int watermarkSize = width * heigth;
+		int watermarkSize = width * height;
 		
 		/* ----------------   Loading images  ---------------------- */
 		int imgNumber = imagesPath.size();
@@ -268,7 +268,7 @@ namespace watermark {
 						if (k == watermark.rows) {
 							k = 0;
 							redundancy = redundancy + 1;
-							Mat extractedWatermark = Mat(width, heigth, CV_8U, 0);
+							Mat extractedWatermark = Mat(width, height, CV_8U, 0);
 							watermark.copyTo(extractedWatermark);
 							watermarks.push_back(extractedWatermark);
 						}
@@ -292,7 +292,7 @@ namespace watermark {
 						if (k == watermark.rows) {
 							k = 0;
 							redundancy = redundancy + 1;
-							Mat extractedWatermark = Mat(width, heigth, CV_8UC1, 0);
+							Mat extractedWatermark = Mat(width, height, CV_8UC1, 0);
 							watermark.copyTo(extractedWatermark);
 							watermarks.push_back(extractedWatermark);
 						}
@@ -394,16 +394,16 @@ int main(int argc, char** argv)
 					std::cerr << error << std::endl;
 					return -1;
 				}
-				if (!root.isMember("heigth")) {
-					error["error"]["message"] = "Specify the watermark image heigth.";
+				if (!root.isMember("height")) {
+					error["error"]["message"] = "Specify the watermark image height.";
 					std::cerr << error << std::endl;
 					return -1;
 				}
 				int width = root["width"].asInt();
-				int heigth = root["heigth"].asInt();
+				int height = root["height"].asInt();
 				
 				// Extracting watermark
-				return watermark::extractWatermark(imagesPath, width, heigth);
+				return watermark::extractWatermark(imagesPath, width, height);
 			}
 		}
 		else {
@@ -474,22 +474,22 @@ int main(int argc, char** argv)
 				std::string widthString = std::string(argv[i]);
 				i = i + 1;
 				if (i >= argc) {
-					std::cerr << "Specify watermark image heigth" << std::endl;
+					std::cerr << "Specify watermark image height" << std::endl;
 					return -1;
 				}
-				std::string heigthString = std::string(argv[i]);
+				std::string heightString = std::string(argv[i]);
 				int width;
-				int heigth;
+				int height;
 				try {
 					width = std::stoi(widthString);
-					heigth = std::stoi(heigthString);
+					height = std::stoi(heightString);
 				}
 				catch (const std::exception& e) {
-					std::cerr << "Width and Heigth must be Integers" << std::endl;
+					std::cerr << "Width and height must be Integers" << std::endl;
 					return -1;
 				}
 
-				return watermark::extractWatermark(imagesPath, width, heigth);
+				return watermark::extractWatermark(imagesPath, width, height);
 			}
 		}
 
